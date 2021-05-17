@@ -14,9 +14,9 @@ def products():
     pass
 
 @app.route('/opinions/<productId>')
-def opinions(productId):
+def opinions(product_id):
     pass
 
 @app.route('/charts/<productId>')
-def charts(productId):
+def charts(product_id):
     pass
