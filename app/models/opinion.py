@@ -1,7 +1,8 @@
 from app.utils import extract_element
 
+
 class Opinion:
-    
+
     selectors = {
         "author": ["span.user-post__author-name"],
         "recommendation": ["span.user-post__author-recomendation > em"],
@@ -16,7 +17,7 @@ class Opinion:
         "useless": ["span[id^='votes-no']"]
     }
 
-    def __init__(self, opinion_id = None, author = None, recommendation = None, stars = None, content = None, pros = [], cons = [], purchased = None, submit_date = None, purchase_date = None, useful = None, useless = None):
+    def __init__(self, opinion_id=None, author=None, recommendation=None, stars=None, content=None, pros=[], cons=[], purchased=None, submit_date=None, purchase_date=None, useful=None, useless=None):
         self.opinion_id = opinion_id
         self.author = author
         self.recommendation = recommendation
@@ -29,24 +30,26 @@ class Opinion:
         self.purchase_date = purchase_date
         self.useful = useful
         self.useless = useless
-    
+
     def extract_opinion(self, opinion):
         for key, args in self.selectors.items():
             setattr(self, key, extract_element(opinion, *args))
         self.opinion_id = opinion["data-entry-id"]
+        return self
 
-        opinion_elements["recommendation"] = True if opinion_elements[
-            "recommendation"] == "Polecam" else False if opinion_elements["recommendation"] == "Nie polecam" else None
-        opinion_elements["stars"] = float(
-            opinion_elements["stars"].split("/")[0].replace(",", "."))
-        opinion_elements["purchased"] = bool(
-            opinion_elements["purchased"])
-        opinion_elements["useful"] = int(opinion_elements["useful"])
-        opinion_elements["useless"] = int(opinion_elements["useless"])
-    
+    def transform_opinion(self):
+        self.recommendation = True if self.recommendation == "Polecam" else False if self.recommendation == "Nie polecam" else None
+        self.stars = float(self.stars.split("/")[0].replace(",", "."))
+        self.purchased = bool(self.purchased)
+        self.useful = int(self.useful)
+        self.useless = int(self.useless)
+        return self
+
     def __str__(self):
-        pass
+        return f"opinion_id: {self.opinion_id}<br>" + "<br>".join(f"{key}: {str(getattr(self, key))}" for key in self.selectors.keys())
 
-    def __dict__(self):
-        pass
-        
+    def __repr__(self):
+        return f"Opinion(opinion_id={self.opinion_id}" + ", ".join(f"{key}={str(getattr(self, key))}" for key in self.selectors.keys()) + ")"
+
+    def to_dict(self):
+        return {"opinion_id": self.opinion_id} | {key: getattr(self, key) for key in self.selectors.keys()}

@@ -1,4 +1,3 @@
-
 def extract_element(dom_tree, selector, attribute=None):
     try:
         if attribute:
